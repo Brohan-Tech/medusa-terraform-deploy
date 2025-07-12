@@ -1,25 +1,21 @@
-name: Terraform Deploy (Staging & Production)
+name: Terraform Deploy
 
 on:
   push:
     branches:
-      - dev      # staging
-      - main     # production
+      - main
+      - dev
     paths:
       - "infra/**"
 
 jobs:
   terraform:
-    name: Terraform ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
     runs-on: ubuntu-latest
-    env:
-      TF_VAR_aws_region: us-east-1
     defaults:
       run:
         working-directory: infra
-
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
@@ -29,22 +25,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Set up Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
 
-      - name: Select Workspace
-        run: |
-          terraform workspace new staging || true
-          terraform workspace new production || true
-          terraform workspace select ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-
       - name: Terraform Plan
         run: terraform plan
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
-        run: terraform apply -auto-approve
 
