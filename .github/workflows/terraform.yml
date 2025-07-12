@@ -1,21 +1,30 @@
-name: Terraform Deploy
+name: Terraform Deploy (Staging & Production)
 
 on:
   push:
     branches:
+      - dev
       - main
     paths:
-      - 'infra/**'
+      - "infra/**"
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_VAR_aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  TF_VAR_aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_VAR_aws_region: us-east-1
 
 jobs:
   terraform:
+    name: Terraform ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: infra
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
@@ -25,11 +34,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Setup Terraform
+      - name: Remove cached Terraform dir (optional but recommended)
+        run: rm -rf .terraform
+
+      - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
+
+      - name: Select Workspace
+        run: |
+          terraform workspace new staging || true
+          terraform workspace new production || true
+          terraform workspace select ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
 
       - name: Terraform Plan
         run: terraform plan
