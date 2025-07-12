@@ -1,0 +1,43 @@
+name: Terraform Deploy (Staging & Production)
+
+on:
+  push:
+    branches:
+      - dev      # staging
+      - main     # production
+    paths:
+      - "infra/**"
+
+env:
+  TF_VAR_aws_region: us-east-1
+
+jobs:
+  terraform:
+    name: Terraform ${{ github.ref == 'refs/heads/main' && 'Production' || 'Staging' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Select Workspace
+        run: |
+          terraform workspace new staging || true
+          terraform workspace new production || true
+          terraform workspace select ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
