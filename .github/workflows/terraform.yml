@@ -2,9 +2,7 @@ name: Terraform Deploy (Staging & Production)
 
 on:
   push:
-    branches:
-      - dev
-      - main
+    branches: [dev, main]
     paths:
       - "infra/**"
 
@@ -26,9 +24,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
-      - name: Remove cached Terraform dir (optional but recommended)
-        run: rm -rf .terraform
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
