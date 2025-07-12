@@ -3,18 +3,18 @@ name: Medusa Backend Deploy (Staging/Production)
 on:
   push:
     branches:
-      - dev      # staging
-      - main     # production
+      - dev
+      - main
+
 env:
   AWS_REGION: us-east-1
+  ECR_REPO_NAME: medusa-repo
+  ECS_CLUSTER: ${{ github.ref == 'refs/heads/main' && 'medusa-cluster-prod' || 'medusa-cluster-staging' }}
+  ECS_SERVICE: ${{ github.ref == 'refs/heads/main' && 'medusa-service-prod' || 'medusa-service-staging' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      ECR_REPO_NAME: ${{ github.ref == 'refs/heads/main' && 'medusa-repo-prod' || 'medusa-repo-staging' }}
-      ECS_CLUSTER: ${{ github.ref == 'refs/heads/main' && 'medusa-cluster-prod' || 'medusa-cluster-staging' }}
-      ECS_SERVICE: ${{ github.ref == 'refs/heads/main' && 'medusa-service-prod' || 'medusa-service-staging' }}
 
     steps:
       - name: Checkout code
@@ -40,7 +40,7 @@ jobs:
       - name: Deploy to ECS
         run: |
           aws ecs update-service \
-            --cluster $ECS_CLUSTER \
-            --service $ECS_SERVICE \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_SERVICE }} \
             --force-new-deployment
 
