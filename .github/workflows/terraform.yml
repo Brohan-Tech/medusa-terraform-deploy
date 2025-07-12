@@ -2,9 +2,14 @@ name: Terraform Deploy (Staging & Production)
 
 on:
   push:
-    branches: [dev, main]
+    branches:
+      - dev      # staging
+      - main     # production
     paths:
       - "infra/**"
+
+env:
+  TF_VAR_aws_region: us-east-1
 
 jobs:
   terraform:
