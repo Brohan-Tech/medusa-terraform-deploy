@@ -17,3 +17,6 @@ npm-debug.log*
 .idea/
 .vscode/
 
+# Ignore terraform.tfvars
+terraform.tfvars
+
