@@ -18,7 +18,7 @@ resource "aws_lb_target_group" "this" {
   target_type = "ip"
 
   health_check {
-    path                = "/store/products" # ✅ Must return 200
+    path                = "/store/products" #
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -103,9 +103,9 @@ resource "aws_ecs_task_definition" "this" {
       }]
       environment = [
         { name = "NODE_ENV", value = "production" },
-        { name = "DATABASE_URL", value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}:5432/${var.project_name}" }
+        { name = "DATABASE_URL", value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}/${var.project_name}" }
       ],
-      healthCheck = { # ✅ Added ECS container health check
+      healthCheck = { 
         command     = ["CMD-SHELL", "curl -f http://localhost:9000/store/products || exit 1"]
         interval    = 30
         timeout     = 5
