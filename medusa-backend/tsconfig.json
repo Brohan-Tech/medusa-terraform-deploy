@@ -21,7 +21,7 @@
     "swc": true
   },
   "include": [
-    "src/**/*",
+    "src/**/*",    
     ".medusa/types/**/*"
   ],
   "exclude": [
