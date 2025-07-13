@@ -11,13 +11,14 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "this" {
-  name     = "${var.project_name}-tg"
-  port     = 9000
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = "${var.project_name}-tg"
+  port        = 9000
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
   target_type = "ip"
+
   health_check {
-    path                = "/store/products"
+    path                = "/store/products" # ✅ Must return 200
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -77,6 +78,11 @@ resource "aws_security_group" "ecs" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${var.project_name}"
+  retention_in_days = 7
+}
+
 resource "aws_ecs_task_definition" "this" {
   family                   = "${var.project_name}-task"
   requires_compatibilities = ["FARGATE"]
@@ -99,6 +105,13 @@ resource "aws_ecs_task_definition" "this" {
         { name = "NODE_ENV", value = "production" },
         { name = "DATABASE_URL", value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}:5432/${var.project_name}" }
       ],
+      healthCheck = { # ✅ Added ECS container health check
+        command     = ["CMD-SHELL", "curl -f http://localhost:9000/store/products || exit 1"]
+        interval    = 30
+        timeout     = 5
+        retries     = 3
+        startPeriod = 10
+      },
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -111,11 +124,6 @@ resource "aws_ecs_task_definition" "this" {
   ])
 }
 
-resource "aws_cloudwatch_log_group" "ecs" {
-  name              = "/ecs/${var.project_name}"
-  retention_in_days = 7
-}
-
 resource "aws_ecs_service" "this" {
   name            = "${var.project_name}-service"
   cluster         = aws_ecs_cluster.this.id
@@ -124,8 +132,8 @@ resource "aws_ecs_service" "this" {
   desired_count   = 1
 
   network_configuration {
-    subnets         = var.subnet_ids
-    security_groups = [aws_security_group.ecs.id]
+    subnets          = var.subnet_ids
+    security_groups  = [aws_security_group.ecs.id]
     assign_public_ip = true
   }
 
