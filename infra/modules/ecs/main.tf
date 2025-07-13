@@ -103,7 +103,10 @@ resource "aws_ecs_task_definition" "this" {
       }]
       environment = [
         { name = "NODE_ENV", value = "production" },
-        { name = "DATABASE_URL", value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}/${var.project_name}" }
+        { 
+  		name  = "DATABASE_URL", 
+  		value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}:5432/${var.project_name}?sslmode=require" 
+	}
       ],
       healthCheck = { 
         command     = ["CMD-SHELL", "curl -f http://localhost:9000/store/products || exit 1"]
