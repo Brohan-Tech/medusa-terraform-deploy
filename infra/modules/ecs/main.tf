@@ -105,7 +105,7 @@ resource "aws_ecs_task_definition" "this" {
         { name = "NODE_ENV", value = "production" },
         { 
   		name  = "DATABASE_URL", 
-  		value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}:5432/${var.project_name}?sslmode=require" 
+  		value = "postgres://${var.project_name}:${var.db_password}@${var.db_endpoint}/${var.project_name}?sslmode=require" 
 	}
       ],
       healthCheck = { 
