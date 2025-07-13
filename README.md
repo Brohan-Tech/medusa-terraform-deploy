@@ -101,7 +101,6 @@ At the time of testing, the **DNS/ALB endpoint was not functional**, although:
 ## 🔮 Future Improvements
 
 - Add a frontend using **Next.js** or **Medusa Storefront**
-- Configure **CloudWatch Dashboards** or **Prometheus** for monitoring
 - Integrate **Redis** for caching and background tasks
 
 ---
