@@ -1,4 +1,4 @@
-# 🚀 Full DevOps Project: Medusa Backend on AWS with Terraform & GitHub Actions
+# DevOps Project: Medusa Backend on AWS with Terraform & GitHub Actions
 
 This project demonstrates a **complete DevOps pipeline** for deploying the open-source Medusa headless commerce backend on **AWS ECS Fargate**, using **Terraform** for infrastructure-as-code and **GitHub Actions** for CI/CD automation.
 
