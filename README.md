@@ -2,7 +2,7 @@
 
 This project demonstrates a **complete DevOps pipeline** for deploying the open-source Medusa headless commerce backend on **AWS ECS Fargate**, using **Terraform** for infrastructure-as-code and **GitHub Actions** for CI/CD automation.
 
-## 🔧 Tech Stack
+## Tech Stack
 
 - **Medusa.js** (Headless Commerce Backend)
 - **AWS ECS Fargate** (Container Orchestration)
@@ -15,7 +15,7 @@ This project demonstrates a **complete DevOps pipeline** for deploying the open-
 
 ---
 
-## 🗂 Project Structure
+## Project Structure
 
 ```
 .
@@ -29,7 +29,7 @@ This project demonstrates a **complete DevOps pipeline** for deploying the open-
 
 ---
 
-## 🏗️ Architecture Overview
+## 🏗Architecture Overview
 
 - Medusa runs in a **Docker container** on AWS ECS (Fargate)
 - A **PostgreSQL database** is provisioned in Amazon RDS
@@ -42,7 +42,7 @@ This project demonstrates a **complete DevOps pipeline** for deploying the open-
 
 ---
 
-## ✅ Features
+## Features
 
 - **One-click infrastructure provisioning** with Terraform via GitHub Actions
 - **CI/CD pipeline** for Medusa Docker builds and ECS deployments
@@ -52,7 +52,7 @@ This project demonstrates a **complete DevOps pipeline** for deploying the open-
 
 ---
 
-## 🚀 Deployment Steps
+##  Deployment Steps
 
 1. Push Terraform code to the `infra/` folder  
    → Triggers `terraform.yml` for infrastructure provisioning
@@ -63,38 +63,24 @@ This project demonstrates a **complete DevOps pipeline** for deploying the open-
 
 ---
 
-## 🛡️ Secrets Management
+## Secrets Management
 
 - **GitHub Secrets**: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
 - **AWS Secrets Manager**: Stores runtime secrets like `DATABASE_URL`
 
 ---
 
-## 📦 File Upload Handling
+## File Upload Handling
 
 - **S3 Bucket**: Stores product images/files
 - **DynamoDB Table**: Logs file upload metadata (e.g., filename, timestamp)
 
 ---
 
-## ⚙️ CI/CD Workflows
+## CI/CD Workflows
 
 - `terraform.yml`: Initializes, plans, and applies Terraform changes
 - `medusa-deploy.yml`: Builds Docker image, pushes to ECR, updates ECS task
-
----
-
-## 📌 Known Issue
-
-At the time of testing, the **DNS/ALB endpoint was not functional**, although:
-
-- ECS service was healthy
-- Secrets loaded correctly
-- File upload to S3 worked
-- DynamoDB logging confirmed
-- Both GitHub Actions workflows executed without errors
-
-⚠️ If more time was available, the **DNS and ALB configuration would have been finalized** to allow public access via domain or friendly DNS name.
 
 ---
 
